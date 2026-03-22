@@ -1,7 +1,7 @@
-package com.app.users.Controller;
+package com.app.users.controllers;
 
 
-import com.app.users.dto.ClientDTO;
+import com.app.users.dto.userDTO;
 import com.app.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,24 +17,24 @@ public class UserControler {
 
 
     @GetMapping("/users")
-    public List<ClientDTO> getUsers()
+    public List<userDTO> getUsers()
     {
         return service.findAll();
     }
 
     @PostMapping("/user")
-    public ClientDTO creteuser(@RequestBody ClientDTO user)
+    public userDTO creteUser(@RequestBody userDTO user)
     {
         return service.add(user);
     }
 
     @PutMapping("/user/{id}")
-    public ClientDTO updateUser(@PathVariable(name="id") int id, @RequestBody ClientDTO user) {
+    public userDTO updateUser(@PathVariable(name="id") int id, @RequestBody userDTO user) {
         return  service.update(user, id);
     }
 
     @DeleteMapping("/user/{id}")
-    public ClientDTO deleteUser(@PathVariable int id) {
+    public userDTO deleteUser(@PathVariable int id) {
         return service.remove(id);
     }
 

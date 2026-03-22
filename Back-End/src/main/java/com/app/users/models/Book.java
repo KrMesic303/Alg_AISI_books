@@ -1,6 +1,6 @@
-package com.app.users.dto;
+package com.app.users.models;
 
-import com.app.users.bo.Emprunt;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -11,17 +11,21 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-
+@Entity
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class LivreDTO {
+public class Book {
 
+    @Id
+    @GeneratedValue
     private int isbn;
-    private String nom;
-    private boolean disponible;
-    private float prix;
-    private String auteur;
+    private String name;
+    private boolean available;
+    private float price;
+    private String author;
+    @OneToMany
+    private List<Loan> loans;
 
 }

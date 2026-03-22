@@ -1,8 +1,8 @@
 package com.app.users.service;
 
-import com.app.users.bo.Client;
+import com.app.users.models.User;
 import com.app.users.dao.UserDAO;
-import com.app.users.dto.ClientDTO;
+import com.app.users.dto.userDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,65 +16,70 @@ public class UserService implements IUserService{
     @Autowired
     private UserDAO dao;
 
+    @Override
+    public userDTO add(userDTO user) {
+        User entity = toUser(user);
+        return fromUser(dao.save(entity));
+    }
 
     @Override
-    public ClientDTO add(ClientDTO user) {
-        return fromUser(dao.save(toUser(user)));
-    }
-    @Override
-    public ClientDTO remove(int id) {
-            Optional<Client> user = dao.findById(id);
-            if(user.isPresent())
+    public userDTO remove(int id) {
+            Optional<User> user = dao.findById(id);
+
+            if(user.isPresent()) {
                 dao.deleteById(id);
-            else
-                throw new RuntimeException("User not found");
+                return fromUser(user.get());
+            }
 
-        return  this.fromUser(user.get());
-    }
-    @Override
-    public ClientDTO update(ClientDTO newUserDTO, int id) {
-        Optional<Client> userOld = dao.findById(id);
-        if(userOld.isPresent()){
-            ClientDTO userUpdated = this.fromUser(userOld.get());
-            userUpdated.setNom(newUserDTO.getNom());
-            dao.save(this.toUser(userUpdated));
-            return userUpdated;
-        }
-        else
             throw new RuntimeException("User not found");
     }
 
-
     @Override
-    public List<ClientDTO> findAll() {
-        return  dao.findAll().stream()
-                .map(u->fromUser(u))
-                .collect(Collectors.toList());
+    public userDTO update(userDTO newUserDTO, int id) {
+        Optional<User> userOld = dao.findById(id);
+        if(userOld.isPresent()){
+            User existing = userOld.get();
+            existing.setName(newUserDTO.getName());
+            existing.setLastName(newUserDTO.getLastName());
+            return fromUser(dao.save(existing));
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 
+    @Override
+    public List<userDTO> findAll() {
+        return dao.findAll().stream()
+                .map(this::fromUser)
+                .toList();
+    }
 
     @Override
-    public ClientDTO findUser(int id) {
-        Optional<Client> user = dao.findById(id);
-        if (!user.isEmpty())
+    public userDTO findUser(int id) {
+        Optional<User> user = dao.findById(id);
+        if (user.isPresent()) {
             return fromUser(user.get());
+        }
         return null;
     }
 
+    public User toUser(userDTO userDTO) {
+        User.UserBuilder builder = User.builder()
+                .name(userDTO.getName())
+                .lastName(userDTO.getLastName());
 
-    public Client toUser(ClientDTO userDTO)
-    {
-        return Client.builder()
-                .nom(userDTO.getNom())
-                .prenom(userDTO.getPrenom())
-                .build();
+        if (userDTO.getId() != null) {
+            builder.id(userDTO.getId());
+        }
+
+        return builder.build();
     }
 
-    public ClientDTO fromUser(Client user)
-    {
-        return ClientDTO.builder()
-                .prenom(user.getPrenom())
-                .nom(user.getNom())
+    public userDTO fromUser(User user) {
+        return userDTO.builder()
+                .id(user.getId())
+                .lastName(user.getLastName())
+                .name(user.getName())
                 .build();
     }
 }
