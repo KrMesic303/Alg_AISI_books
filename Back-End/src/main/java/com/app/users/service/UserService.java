@@ -2,13 +2,12 @@ package com.app.users.service;
 
 import com.app.users.models.User;
 import com.app.users.dao.UserDAO;
-import com.app.users.dto.userDTO;
+import com.app.users.dto.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService{
@@ -17,13 +16,13 @@ public class UserService implements IUserService{
     private UserDAO dao;
 
     @Override
-    public userDTO add(userDTO user) {
+    public UserDTO add(UserDTO user) {
         User entity = toUser(user);
         return fromUser(dao.save(entity));
     }
 
     @Override
-    public userDTO remove(int id) {
+    public UserDTO remove(int id) {
             Optional<User> user = dao.findById(id);
 
             if(user.isPresent()) {
@@ -35,7 +34,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public userDTO update(userDTO newUserDTO, int id) {
+    public UserDTO update(UserDTO newUserDTO, int id) {
         Optional<User> userOld = dao.findById(id);
         if(userOld.isPresent()){
             User existing = userOld.get();
@@ -48,14 +47,14 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public List<userDTO> findAll() {
+    public List<UserDTO> findAll() {
         return dao.findAll().stream()
                 .map(this::fromUser)
                 .toList();
     }
 
     @Override
-    public userDTO findUser(int id) {
+    public UserDTO findUser(int id) {
         Optional<User> user = dao.findById(id);
         if (user.isPresent()) {
             return fromUser(user.get());
@@ -63,7 +62,7 @@ public class UserService implements IUserService{
         return null;
     }
 
-    public User toUser(userDTO userDTO) {
+    public User toUser(UserDTO userDTO) {
         User.UserBuilder builder = User.builder()
                 .name(userDTO.getName())
                 .lastName(userDTO.getLastName());
@@ -75,8 +74,8 @@ public class UserService implements IUserService{
         return builder.build();
     }
 
-    public userDTO fromUser(User user) {
-        return userDTO.builder()
+    public UserDTO fromUser(User user) {
+        return UserDTO.builder()
                 .id(user.getId())
                 .lastName(user.getLastName())
                 .name(user.getName())
